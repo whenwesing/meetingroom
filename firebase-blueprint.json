@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "Reservation": {
+      "title": "Reservation",
+      "description": "A booking for a counseling room at a specific time and date.",
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "The date of the reservation (YYYY-MM-DD)."
+        },
+        "roomId": {
+          "type": "string",
+          "description": "The ID of the room (311, 312, 313, 314, glass)."
+        },
+        "timeSlot": {
+          "type": "integer",
+          "description": "The starting hour of the reservation (e.g., 8, 9, 10...)."
+        },
+        "userName": {
+          "type": "string",
+          "description": "The name of the person who made the reservation."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The Firebase Auth UID of the user."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the reservation was created."
+        }
+      },
+      "required": ["date", "roomId", "timeSlot", "userName", "userId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/reservations/{reservationId}": {
+      "schema": "Reservation",
+      "description": "Collection of all counseling room reservations."
+    }
+  }
+}

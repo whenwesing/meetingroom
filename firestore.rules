@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: reservations
+    // Document ID: {date}_{roomId}_{timeSlot}
+    // Fields:
+    //   - date: string (required) - YYYY-MM-DD
+    //   - roomId: string (required) - 311, 312, 313, 314, glass
+    //   - timeSlot: number (required) - 8 to 17
+    //   - userName: string (required) - Max 50 chars
+    //   - userId: string (required) - UID of the owner
+    //   - createdAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidReservation(data) {
+      return data.keys().hasAll(['date', 'roomId', 'timeSlot', 'userName', 'userId', 'createdAt']) &&
+             data.keys().hasOnly(['date', 'roomId', 'timeSlot', 'userName', 'userId', 'createdAt']) &&
+             data.date is string && data.date.matches('^\\d{4}-\\d{2}-\\d{2}$') &&
+             data.roomId in ['311', '312', '313', '314', 'glass'] &&
+             data.timeSlot is int && data.timeSlot >= 8 && data.timeSlot <= 17 &&
+             data.userName is string && data.userName.size() > 0 && data.userName.size() <= 50 &&
+             data.userId == request.auth.uid &&
+             data.createdAt is timestamp;
+    }
+
+    match /reservations/{reservationId} {
+      // Allow authenticated users to see the schedule
+      allow read: if isAuthenticated();
+
+      // Allow creating a reservation if the slot is empty and data is valid
+      // The reservationId should be {date}_{roomId}_{timeSlot} to prevent duplicates naturally
+      allow create: if isAuthenticated() && 
+                      isValidReservation(request.resource.data) &&
+                      reservationId == request.resource.data.date + "_" + request.resource.data.roomId + "_" + string(request.resource.data.timeSlot);
+
+      // Allow users to delete their own reservations
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+
+      // Updates are generally not allowed for reservations to keep it simple (delete and re-book)
+      allow update: if false;
+    }
+
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}
