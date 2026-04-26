@@ -272,6 +272,12 @@ export default function App() {
     }
   };
 
+  const formatTime = (slot: number) => {
+    const hours = Math.floor(slot);
+    const minutes = (slot % 1) === 0 ? '00' : '30';
+    return `${hours}:${minutes}`;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-50">
@@ -429,83 +435,106 @@ export default function App() {
                     </div>
                     
                     <div className="grid grid-cols-[80px_repeat(5,1fr)] gap-3">
-                      <div className="flex flex-col gap-2">
-                        {TIME_SLOTS.map(slot => (
-                          <div key={slot} className="h-10 flex items-center justify-center text-sm font-mono text-slate-400">
-                            {slot}:00
+                      {/* Time Column */}
+                      <div className="flex flex-col gap-0 border border-slate-100 rounded-xl overflow-hidden">
+                        {Array.from(new Set(TIME_SLOTS.map(s => Math.floor(s)))).sort((a, b) => a - b).map((hour) => (
+                          <div 
+                            key={hour} 
+                            className={cn(
+                              "flex flex-col border-b border-slate-100 last:border-0",
+                              hour % 2 === 0 ? "bg-white" : "bg-slate-50/80"
+                            )}
+                          >
+                            <div className="h-10 flex items-center justify-center text-xs font-mono text-slate-500 font-bold border-b border-slate-50/50">
+                              {hour}:00
+                            </div>
+                            <div className="h-10 flex items-center justify-center text-[10px] font-mono text-slate-400 italic">
+                              :30
+                            </div>
                           </div>
                         ))}
                       </div>
 
+                      {/* Day Columns */}
                       {weekDays.map((day, dayIdx) => (
-                        <div key={dayIdx} className="flex flex-col gap-2">
-                          {TIME_SLOTS.map(slot => {
-                            const dateStr = format(day, 'yyyy-MM-dd');
-                            const resId = `${dateStr}_${room.id}_${slot}`;
-                            const reservation = reservations.find(r => r.id === resId);
-                            const isOwn = reservation?.userId === user.uid;
+                        <div key={dayIdx} className="flex flex-col gap-0 border border-slate-100 rounded-xl overflow-hidden">
+                          {Array.from(new Set(TIME_SLOTS.map(s => Math.floor(s)))).sort((a, b) => a - b).map((hour) => (
+                            <div 
+                              key={hour} 
+                              className={cn(
+                                "flex flex-col border-b border-slate-100 last:border-0",
+                                hour % 2 === 0 ? "bg-white" : "bg-slate-50/80"
+                              )}
+                            >
+                              {[hour, hour + 0.5].map(slot => {
+                                const dateStr = format(day, 'yyyy-MM-dd');
+                                const resId = `${dateStr}_${room.id}_${slot}`;
+                                const reservation = reservations.find(r => r.id === resId);
+                                const isOwn = reservation?.userId === user.uid;
 
-                            return (
-                              <div key={slot} className="relative h-10">
-                                <button
-                                  onClick={() => {
-                                    if (reservation) {
-                                      if (isOwn) setDeletingId(resId);
-                                    } else {
-                                      handleReservation(day, room.id, slot);
-                                    }
-                                  }}
-                                  disabled={reservation && !isOwn}
-                                  className={cn(
-                                    "w-full h-full rounded-lg border transition-all flex flex-col items-center justify-center p-1 text-[11px] relative group overflow-hidden",
-                                    !reservation && "bg-white border-slate-100 hover:border-blue-300 hover:bg-blue-50/30",
-                                    reservation && isOwn && "bg-blue-50 border-blue-200 text-blue-700 font-semibold",
-                                    reservation && !isOwn && "bg-slate-100 border-transparent text-slate-400 cursor-not-allowed"
-                                  )}
-                                >
-                                  {reservation ? (
-                                    <>
-                                      <span className="truncate w-full text-center px-1">{reservation.userName}</span>
-                                      {isOwn && (
-                                        <div className="absolute inset-0 bg-red-500/0 group-hover:bg-red-500/90 flex items-center justify-center text-white transition-all">
-                                          <Trash2 className="w-4 h-4 opacity-0 group-hover:opacity-100" />
-                                        </div>
+                                return (
+                                  <div key={slot} className="relative h-10 p-0.5">
+                                    <button
+                                      onClick={() => {
+                                        if (reservation) {
+                                          if (isOwn) setDeletingId(resId);
+                                        } else {
+                                          handleReservation(day, room.id, slot);
+                                        }
+                                      }}
+                                      disabled={reservation && !isOwn}
+                                      className={cn(
+                                        "w-full h-full rounded-md border transition-all flex flex-col items-center justify-center p-1 text-[11px] relative group overflow-hidden shadow-sm",
+                                        !reservation && "bg-transparent border-transparent hover:border-blue-200 hover:bg-blue-50/50",
+                                        reservation && isOwn && "bg-blue-100 border-blue-300 text-blue-800 font-bold z-10",
+                                        reservation && !isOwn && "bg-slate-200/70 border-slate-300 text-slate-500 cursor-not-allowed opacity-80"
                                       )}
-                                    </>
-                                  ) : (
-                                    <span className="opacity-0 group-hover:opacity-100 text-blue-400 font-medium">예약</span>
-                                  )}
-                                </button>
-
-                                <AnimatePresence>
-                                  {deletingId === resId && (
-                                    <motion.div 
-                                      initial={{ opacity: 0, scale: 0.95 }}
-                                      animate={{ opacity: 1, scale: 1 }}
-                                      exit={{ opacity: 0, scale: 0.95 }}
-                                      className="absolute inset-0 z-10 bg-white rounded-xl border border-red-200 shadow-lg flex flex-col items-center justify-center p-1"
                                     >
-                                      <p className="text-[10px] text-red-600 font-bold mb-1">취소할까요?</p>
-                                      <div className="flex gap-1">
-                                        <button 
-                                          onClick={() => handleDelete(resId, reservation!.userId)}
-                                          className="px-2 py-0.5 bg-red-600 text-white rounded text-[10px] hover:bg-red-700"
+                                      {reservation ? (
+                                        <>
+                                          <span className="truncate w-full text-center px-1 leading-tight">{reservation.userName}</span>
+                                          {isOwn && (
+                                            <div className="absolute inset-0 bg-red-500/0 group-hover:bg-red-500/90 flex items-center justify-center text-white transition-all">
+                                              <Trash2 className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100" />
+                                            </div>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <span className="opacity-0 group-hover:opacity-100 text-blue-400 font-medium text-[9px] uppercase tracking-tighter transition-opacity">예약</span>
+                                      )}
+                                    </button>
+
+                                    <AnimatePresence>
+                                      {deletingId === resId && (
+                                        <motion.div 
+                                          initial={{ opacity: 0, scale: 0.95 }}
+                                          animate={{ opacity: 1, scale: 1 }}
+                                          exit={{ opacity: 0, scale: 0.95 }}
+                                          className="absolute inset-0 z-20 bg-white rounded-md border border-red-200 shadow-xl flex flex-col items-center justify-center p-0.5"
                                         >
-                                          네
-                                        </button>
-                                        <button 
-                                          onClick={() => setDeletingId(null)}
-                                          className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] hover:bg-slate-200"
-                                        >
-                                          아니오
-                                        </button>
-                                      </div>
-                                    </motion.div>
-                                  )}
-                                </AnimatePresence>
-                              </div>
-                            );
-                          })}
+                                          <p className="text-[9px] text-red-600 font-bold mb-0.5 leading-none">취소?</p>
+                                          <div className="flex gap-1">
+                                            <button 
+                                              onClick={() => handleDelete(resId, reservation!.userId)}
+                                              className="px-1.5 py-0.5 bg-red-600 text-white rounded text-[8px] font-bold hover:bg-red-700"
+                                            >
+                                              네
+                                            </button>
+                                            <button 
+                                              onClick={() => setDeletingId(null)}
+                                              className="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[8px] hover:bg-slate-200"
+                                            >
+                                              X
+                                            </button>
+                                          </div>
+                                        </motion.div>
+                                      )}
+                                    </AnimatePresence>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ))}
                         </div>
                       ))}
                     </div>

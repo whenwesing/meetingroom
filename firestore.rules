@@ -31,7 +31,7 @@ service cloud.firestore {
              data.keys().hasOnly(['date', 'roomId', 'timeSlot', 'userName', 'userId', 'createdAt']) &&
              data.date is string && data.date.matches('^\\d{4}-\\d{2}-\\d{2}$') &&
              data.roomId in ['311', '312', '313', '314', 'glass'] &&
-             data.timeSlot is int && data.timeSlot >= 8 && data.timeSlot <= 17 &&
+             data.timeSlot is number && data.timeSlot >= 8 && data.timeSlot <= 17.5 &&
              data.userName is string && data.userName.size() > 0 && data.userName.size() <= 50 &&
              data.userId == request.auth.uid &&
              data.createdAt is timestamp;
