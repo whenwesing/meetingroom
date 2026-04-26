@@ -442,13 +442,13 @@ export default function App() {
                             key={hour} 
                             className={cn(
                               "flex flex-col border-b border-slate-100 last:border-0",
-                              hour % 2 === 0 ? "bg-white" : "bg-slate-50/80"
+                              hour % 2 === 0 ? "bg-white" : "bg-slate-100"
                             )}
                           >
-                            <div className="h-10 flex items-center justify-center text-xs font-mono text-slate-500 font-bold border-b border-slate-50/50">
+                            <div className="h-10 flex items-center justify-center text-sm font-mono text-slate-600 font-bold border-b border-slate-200/50">
                               {hour}:00
                             </div>
-                            <div className="h-10 flex items-center justify-center text-[10px] font-mono text-slate-400 italic">
+                            <div className="h-10 flex items-center justify-center text-xs font-mono text-slate-500 italic">
                               :30
                             </div>
                           </div>
@@ -463,7 +463,7 @@ export default function App() {
                               key={hour} 
                               className={cn(
                                 "flex flex-col border-b border-slate-100 last:border-0",
-                                hour % 2 === 0 ? "bg-white" : "bg-slate-50/80"
+                                hour % 2 === 0 ? "bg-white" : "bg-slate-100"
                               )}
                             >
                               {[hour, hour + 0.5].map(slot => {
