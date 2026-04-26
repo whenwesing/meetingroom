@@ -392,7 +392,7 @@ export default function App() {
                 <span>내 예약</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 bg-slate-200 rounded-sm"></div>
+                <div className="w-3 h-3 bg-yellow-100 border border-yellow-200 rounded-sm"></div>
                 <span>타인 예약</span>
               </div>
             </div>
