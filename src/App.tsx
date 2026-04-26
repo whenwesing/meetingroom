@@ -487,7 +487,7 @@ export default function App() {
                                         "w-full h-full rounded-md border transition-all flex flex-col items-center justify-center p-1 text-[11px] relative group overflow-hidden shadow-sm",
                                         !reservation && "bg-transparent border-transparent hover:border-blue-200 hover:bg-blue-50/50",
                                         reservation && isOwn && "bg-blue-100 border-blue-300 text-blue-800 font-bold z-10",
-                                        reservation && !isOwn && "bg-slate-200/70 border-slate-300 text-slate-500 cursor-not-allowed opacity-80"
+                                        reservation && !isOwn && "bg-yellow-100 border-yellow-200 text-yellow-800 cursor-not-allowed opacity-90"
                                       )}
                                     >
                                       {reservation ? (
