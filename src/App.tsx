@@ -297,7 +297,7 @@ export default function App() {
           <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-200">
             <CalendarIcon className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">상담실 예약</h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">중고등학교 상담실 예약</h1>
           <p className="text-slate-500 mb-8">구글 계정으로 로그인하여<br/>상담실을 예약하세요.</p>
           <button 
             onClick={handleLogin}
@@ -321,7 +321,7 @@ export default function App() {
               <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-md shadow-blue-100">
                 <CalendarIcon className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold tracking-tight hidden sm:block">상담실 예약 시스템</h1>
+              <h1 className="text-xl font-bold tracking-tight hidden sm:block">중고등학교 상담실 예약 시스템</h1>
             </div>
 
             <div className="flex items-center gap-4">
@@ -546,7 +546,7 @@ export default function App() {
         </main>
 
         <footer className="max-w-7xl mx-auto p-8 text-center text-slate-400 text-sm">
-          <p>© 2026 상담실 예약 시스템. 모든 권리 보유.</p>
+          <p>© 2026 중고등학교 상담실 예약 시스템. 전형일 제작.</p>
         </footer>
       </div>
     </ErrorBoundary>
